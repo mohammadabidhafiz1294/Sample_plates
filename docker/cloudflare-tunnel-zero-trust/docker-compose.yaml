@@ -1,5 +1,6 @@
 version: "3.9"
 
+#befor assign the network docker , create first.
 networks:
     frontend:
         external: true
@@ -17,3 +18,4 @@ services:
         networks:
             - frontend
             - backend
+## After place in the docker-compose file , export TUNNNEL_TOKEN={ your cloudflare tunnel token }
