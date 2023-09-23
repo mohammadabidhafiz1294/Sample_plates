@@ -1,0 +1,102 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false
+
+# log directory for access middleware and security protection like crowdsec .
+# -- (Optional) Change Log Level and Format here...
+#     - loglevels [DEBUG, INFO, WARNING, ERROR, CRITICAL]
+#     - format [common, json, logfmt]
+log:
+  level: INFO
+  # format: common
+  filePath: /var/log/traefik/traefik.log
+
+# -- (Optional) Enable Accesslog and change Format here...
+#     - format [common, json, logfmt]
+accesslog:
+#   format: common
+  filePath: /var/log/traefik/access.log
+
+# -- (Optional) Enable API and Dashboard here, don't do in production
+api:
+  dashboard: true
+  debug: true
+
+# -- Change EntryPoints here...
+entryPoints:
+  http:
+    address: ":80"
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
+  https:
+    address: ":443"
+    http:
+      middlewares:
+        - crowdsec-bouncer@file
+
+  # -- (Optional) Add custom Entrypoint
+  # custom:
+  #   address: :8080
+
+# -- Configure your CertificateResolver here...
+certificatesResolvers:
+# first if ur are use staging cert . uncomment below.
+#   staging:
+#     acme:
+#       email: your-email@example.com
+#       storage: /etc/traefik/certs/acme.json
+#       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+#       -- (Optional) Remove this section, when using DNS Challenge
+#       httpChallenge:
+#         entryPoint: web
+#       -- (Optional) Configure DNS Challenge
+#       dnsChallenge:
+#         provider: your-resolver (e.g. cloudflare)
+#         resolvers:
+#           - "1.1.1.1:53"
+#           - "8.8.8.8:53"
+#if u use production for https , umcomment below.
+  production:
+    acme:
+      email: example@example.com
+      storage: acme.json
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      -- (Optional) Remove this section, when using DNS Challenge
+      # httpChallenge:
+      #   entryPoint: web
+      # -- (Optional) Configure DNS Challenge
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+          # - "8.8.8.8:53"
+
+# -- (Optional) Disable TLS Cert verification check
+serversTransport:
+  insecureSkipVerify: true
+
+# -- (Optional) Overwrite Default Certificates
+# tls:
+#   stores:
+#     default:
+#       defaultCertificate:
+#         certFile: /etc/traefik/certs/cert.pem
+#         keyFile: /etc/traefik/certs/cert-key.pem
+# -- (Optional) Disable TLS version 1.0 and 1.1
+#   options:
+#     default:
+#       minVersion: VersionTLS12
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    # -- (Optional) Enable this, if you want to expose all containers automatically
+    exposedByDefault: false
+  file:
+    # if you use default directory
+    # directory: /etc/traefik
+    # in case use filename
+    filename: /config.yaml
+    watch: true
