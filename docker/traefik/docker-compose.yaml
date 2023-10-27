@@ -26,18 +26,18 @@ services:
         labels:
             - "traefik.enable=true"
             - "traefik.http.routers.traefik.entrypoints=http"
-            - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.local.example.com`)"
-            - "traefik.http.middlewares.traefik-auth.basicauth.users=USER:BASIC_AUTH_PASSWORD"
+            - "traefik.http.routers.traefik.rule=Host(`traefik-dashboard.local.mohammadabidhafiz.me`)"
+            - "traefik.http.middlewares.traefik-auth.basicauth.users=abid_home_server:####"
             - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
             - "traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https"
             - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
             - "traefik.http.routers.traefik-secure.entrypoints=https"
-            - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.local.example.com`)"
+            - "traefik.http.routers.traefik-secure.rule=Host(`traefik-dashboard.mohammadabidhafiz.me`)"
             - "traefik.http.routers.traefik-secure.middlewares=traefik-auth"
             - "traefik.http.routers.traefik-secure.tls=true"
             - "traefik.http.routers.traefik-secure.tls.certresolver=production"
-            - "traefik.http.routers.traefik-secure.tls.domains[0].main=local.example.com"
-            - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.local.example.com"
+            - "traefik.http.routers.traefik-secure.tls.domains[0].main=local.mohammadabidhafiz.me"
+            - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.local.mohammadabidhafiz.me"
             - "traefik.http.routers.traefik-secure.service=api@internal"
 
 networks:

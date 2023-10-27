@@ -1,46 +1,46 @@
 global:
-  checkNewVersion: true
-  sendAnonymousUsage: false
+    checkNewVersion: true
+    sendAnonymousUsage: false
 
 # log directory for access middleware and security protection like crowdsec .
 # -- (Optional) Change Log Level and Format here...
 #     - loglevels [DEBUG, INFO, WARNING, ERROR, CRITICAL]
 #     - format [common, json, logfmt]
 log:
-  level: INFO
-  # format: common
-  filePath: /var/log/traefik/traefik.log
+    level: INFO
+    # format: common
+    filePath: /var/log/traefik/traefik.log
 
 # -- (Optional) Enable Accesslog and change Format here...
 #     - format [common, json, logfmt]
 accesslog:
-#   format: common
-  filePath: /var/log/traefik/access.log
+    #   format: common
+    filePath: /var/log/traefik/access.log
 
 # -- (Optional) Enable API and Dashboard here, don't do in production
 api:
-  dashboard: true
-  debug: true
+    dashboard: true
+    debug: true
 
 # -- Change EntryPoints here...
 entryPoints:
-  http:
-    address: ":80"
     http:
-      middlewares:
-        - crowdsec-bouncer@file
-  https:
-    address: ":443"
-    http:
-      middlewares:
-        - crowdsec-bouncer@file
+        address: ":80"
+        http:
+            middlewares:
+                - bouncer-traefik@file
+    https:
+        address: ":443"
+        http:
+            middlewares:
+                - bouncer-traefik@file
 
-  # -- (Optional) Add custom Entrypoint
-  # custom:
-  #   address: :8080
+    # -- (Optional) Add custom Entrypoint
+    # custom:
+    #   address: :8080
 
 # -- Configure your CertificateResolver here...
-certificatesResolvers:
+# certificatesResolvers:
 # first if ur are use staging cert . uncomment below.
 #   staging:
 #     acme:
@@ -57,46 +57,63 @@ certificatesResolvers:
 #           - "1.1.1.1:53"
 #           - "8.8.8.8:53"
 #if u use production for https , umcomment below.
-  production:
-    acme:
-      email: example@example.com
-      storage: acme.json
-      caServer: "https://acme-v02.api.letsencrypt.org/directory"
-      -- (Optional) Remove this section, when using DNS Challenge
-      # httpChallenge:
-      #   entryPoint: web
-      # -- (Optional) Configure DNS Challenge
-      dnsChallenge:
-        provider: cloudflare
-        resolvers:
-          - "1.1.1.1:53"
-          - "1.0.0.1:53"
-          # - "8.8.8.8:53"
+# production:
+#   acme:
+#     email: example@example.com
+#     storage: acme.json
+#     caServer: "https://acme-v02.api.letsencrypt.org/directory"
+#     -- (Optional) Remove this section, when using DNS Challenge
+#     # httpChallenge:
+#     #   entryPoint: web
+#     # -- (Optional) Configure DNS Challenge
+#     dnsChallenge:
+#       provider: cloudflare
+#       resolvers:
+#         - "1.1.1.1:53"
+#         - "1.0.0.1:53"
+# - "8.8.8.8:53"
 
 # -- (Optional) Disable TLS Cert verification check
 serversTransport:
-  insecureSkipVerify: true
+    insecureSkipVerify: true
 
 # -- (Optional) Overwrite Default Certificates
-# tls:
-#   stores:
-#     default:
-#       defaultCertificate:
-#         certFile: /etc/traefik/certs/cert.pem
-#         keyFile: /etc/traefik/certs/cert-key.pem
-# -- (Optional) Disable TLS version 1.0 and 1.1
-#   options:
-#     default:
-#       minVersion: VersionTLS12
+tls:
+    stores:
+        default:
+            defaultCertificate:
+                certFile: /origin-certificates/myoriginkey.tld.crt
+                keyFile: /origin-certificates/mydomain.tld.key
+    # -- (Optional) Disable TLS version 1.0 and 1.1
+    options:
+        default:
+            minVersion: VersionTLS12
+            cipherSuites:
+                - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+                - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
+                - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+                - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+                - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+                - TLS_AES_128_GCM_SHA256
+                - TLS_AES_256_GCM_SHA384
+                - TLS_CHACHA20_POLY1305_SHA256
+            curvePreferences:
+                - CurveP521
+                - CurveP384
+            sniStrict: true
+
+    certificates:
+        - certFile: /origin-certificates/mydomain.tld.key
+        - keyFile: /origin-certificates/mydomain.tld.key
 
 providers:
-  docker:
-    endpoint: "unix:///var/run/docker.sock"
-    # -- (Optional) Enable this, if you want to expose all containers automatically
-    exposedByDefault: false
-  file:
-    # if you use default directory
-    # directory: /etc/traefik
-    # in case use filename
-    filename: /config.yaml
-    watch: true
+    docker:
+        endpoint: "unix:///var/run/docker.sock"
+        # -- (Optional) Enable this, if you want to expose all containers automatically
+        exposedByDefault: false
+    file:
+        # if you use default directory
+        # directory: /etc/traefik
+        # in case use filename
+        filename: /config.yaml
+        watch: true
