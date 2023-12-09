@@ -39,6 +39,12 @@ services:
             - "traefik.http.routers.traefik-secure.tls.domains[0].main=local.mohammadabidhafiz.me"
             - "traefik.http.routers.traefik-secure.tls.domains[0].sans=*.local.mohammadabidhafiz.me"
             - "traefik.http.routers.traefik-secure.service=api@internal"
+            # - "traefik.http.routers.traefik-secure.tls=true"
+            # - "traefik.http.routers.traefik-secure.tls.certresolver=default"
+            # - "traefik.http.routers.traefik-secure.service=api@internal"
+            # - "traefik.http.routers.traefik.middlewares=default@file"
+            - "traefik.http.services.traefik.loadbalancer.sticky.cookie.httpOnly=true"
+            - "traefik.http.services.traefik.loadbalancer.sticky.cookie.secure=true"
 
 networks:
     backend:
