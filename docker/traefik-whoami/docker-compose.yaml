@@ -7,11 +7,11 @@ services:
     labels:
         - "traefik.enable=true"
         - "traefik.http.routers.whoami.entrypoints=http"
-        - "traefik.http.routers.whoami.rule=Host(`portainer.local.mohammadabidhafiz.me`)"
+        - "traefik.http.routers.whoami.rule=Host(`portainer.local.admin-web.com`)"
         - "traefik.http.routers.middlewares=whoami-https-redirect"
         - "traefik.http.middlewares.whoami-https-redirect.redirectscheme.scheme=https"
         - "traefik.http.routers.whoami-secure.entrypoints=https"
-        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.local.mohammadabidhafiz.me`)"
+        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.local.admin-web.com`)"
         - "traefik.http.routers.whoami-secure.tls=true"
         - "traefik.http.routers.whoami-secure.service=whoami"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
